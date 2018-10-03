@@ -1,7 +1,13 @@
 import React from "react";
 
 const BotCard = props => {
-  const { bot } = props;
+  // console.log(props.bot.avatar_url)
+  /*
+    place onClick & onClick handler on BotCard such that when the card is clicked,
+    it should pass the clicked bot's id to BotsPage, BotsPage will go through the selectedBots array and check for a match, then filter & return those bots that do not match.  Then, use setState to updated the bot array, which will update via re-rendering the child components.
+
+  */
+  const bot = props.bot;
 
   let botType;
 
@@ -24,7 +30,7 @@ const BotCard = props => {
       <div
         className="ui card"
         key={bot.id}
-        onClick={() => console.log("add code to connect event listener")}
+        onClick={(event) => {props.handleClick(event, bot.id)}}
       >
         <div className="image">
           <img alt="oh no!" src={bot.avatar_url} />
