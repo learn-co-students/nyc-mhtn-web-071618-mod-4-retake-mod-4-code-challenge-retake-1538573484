@@ -1,13 +1,16 @@
 import React from "react";
 import BotCollection from "./BotCollection";
 import YourBotArmy from './YourBotArmy';  
+import BotSpecs from "../components/BotSpecs";
 
 class BotsPage extends React.Component {
   //start here with your code for step one
 
   state = {
     bots: [],
-    botsInArmy: []
+    botsInArmy: [],
+    displayBotSpecs: false,
+    activeBot: {}
   }
 
 
@@ -25,6 +28,19 @@ class BotsPage extends React.Component {
     })
   }
 
+  handleBotSpecs = (bot) => {
+    this.setState({
+      displayBotSpecs: true,
+      activeBot: bot
+    })
+  }
+
+  handleBack = () => {
+    this.setState({
+      displayBotSpecs: false
+    })
+  }
+
   handleRemoveFromArmy = (bot) => {
     console.log(bot);
     
@@ -39,7 +55,9 @@ class BotsPage extends React.Component {
       
       <div>
         <YourBotArmy botsInArmy={this.state.botsInArmy} handleRemoveFromArmy={this.handleRemoveFromArmy}/>
-        <BotCollection bots={this.state.bots} handleAddToArmy={this.handleAddToArmy} />
+        {this.state.displayBotSpecs ? 
+        <BotSpecs bot={this.state.activeBot} handleClick={this.handleAddToArmy} handleBack={this.handleBack}/> : 
+        <BotCollection bots={this.state.bots} handleBotSpecs={this.handleBotSpecs} handleAddToArmy={this.handleAddToArmy} />}
       </div>
     );
   }
