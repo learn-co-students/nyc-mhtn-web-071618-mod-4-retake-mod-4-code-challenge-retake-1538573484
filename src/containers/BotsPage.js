@@ -5,17 +5,20 @@ import YourBotArmy from './YourBotArmy'
 import BotSpecs from '../components/BotSpecs'
 class BotsPage extends React.Component {
   //start here with your code for step one
-  all = {}
+  all = []
   state = {
     yourBots:[],
     bots:[],
-    select: null
+    select: null,
+    condition:{search:"", sortBy:""}
+  }
+
+  getBot(id){
+    return this.all.find(bot=>bot.id === id)
   }
   componentDidMount(){
     ServerApi.bots().then(json=>{
-      json.forEach(data=>{
-        this.all[data.id] = data;
-      })
+      this.all = json
       this.setState({
         bots:json
       })
@@ -28,7 +31,7 @@ class BotsPage extends React.Component {
       this.setState({ select:null})
       return;
     }
-    bot = this.all[id];
+    bot = this.getBot(id);
     if( bot ){
       this.setState(prevState=>{
         return {
@@ -52,15 +55,44 @@ class BotsPage extends React.Component {
   }
 
   onShowBotSpec = (id)=>{
-    this.setState( { select : this.all[id] } )
+    this.setState( { select : this.getBot(id) } )
+  }
+
+  filter = (condition)=>{
+    let {sortBy, search} = condition
+    let bots = this.all.filter(bot=>bot.name.toLowerCase().includes(search.toLowerCase()))
+    if( sortBy !== ""){
+      bots.sort( (a, b)=> {
+        let v1 = a[sortBy], v2 = b[sortBy]
+        if( v1 > v2 ) return -1;
+        else if( v1 < v2 )  return 1;
+        else return 0;
+      } )
+    }
+    this.setState({
+      bots,
+      condition
+    })
   }
   render() {
     return (
       <div>
-        <YourBotArmy yourBots={this.state.yourBots} onClickBotOnYourOwn={this.removeFromEnlist} />
-
-        {this.state.select ? <BotSpecs bot={this.state.select} goBack={this.goBack} enlist={this.enlist}/>
-          : <BotCollection bots={this.state.bots} onClickBotOnCollection={this.onShowBotSpec}/>
+        <YourBotArmy
+            yourBots={this.state.yourBots}
+            onClickBotOnYourOwn={this.removeFromEnlist}
+        />
+        {
+          this.state.select ?
+            <BotSpecs bot={this.state.select}
+                goBack={this.goBack}
+                enlist={this.enlist}
+            />
+          : <BotCollection
+                bots={this.state.bots}
+                onClickBotOnCollection={this.onShowBotSpec}
+                onFilter={this.filter}
+                condition={this.state.condition}
+            />
         }
       </div>
     );
