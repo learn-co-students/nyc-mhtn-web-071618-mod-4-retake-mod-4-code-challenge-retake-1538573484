@@ -24,7 +24,8 @@ class BotsPage extends React.Component {
 
   handleAddToArmy = (bot) => {
     this.setState({
-      botsInArmy: [...this.state.botsInArmy, bot]
+      botsInArmy: [...this.state.botsInArmy, bot],
+      displayBotSpecs: false
     })
   }
 
